@@ -1,6 +1,6 @@
 const Header = (props) => {
     return (
-        <h1>{props.courser}</h1>
+        <h1>{props.course}</h1>
     )
 }
 
@@ -40,7 +40,7 @@ const App = () => {
 
     return (
         <>
-            <Header courser={course} />
+            <Header course={course} />
             <Content parts = { [part1,part2,part3]} exercise={[exercises1,exercises2,exercises3]}/>
             <Total exercises1 = {exercises1} exercises2 = {exercises2} exercises3 = {exercises3}/>
         </>
