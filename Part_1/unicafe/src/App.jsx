@@ -5,6 +5,13 @@ const Header = ({ title }) => <h1>{title}</h1>
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 
 const Statistics = (props) => {
+  if (props.statistics[3] === 0) {
+    return (
+      <div>
+        No feedback given.
+      </div>
+    )
+  }
   return (
     <>
       <p>
