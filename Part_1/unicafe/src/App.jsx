@@ -4,7 +4,7 @@ const Header = ({ title }) => <h1>{title}</h1>
 
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 
-const Display = (props) => {
+const Statistics = (props) => {
   return (
     <>
       <p>
@@ -77,7 +77,7 @@ const App = () => {
       <Button onClick={handleNeutralClick} text='neutral' />
       <Button onClick={handleBadClick} text='bad' />
       <Header title = {formHeaders[1]} />
-      <Display statistics = {[good, neutral, bad, total, average, positive]}/>
+      <Statistics statistics = {[good, neutral, bad, total, average, positive]}/>
     </>
   )
 }
