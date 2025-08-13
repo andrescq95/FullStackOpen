@@ -4,6 +4,45 @@ const Header = ({ title }) => <h1>{title}</h1>
 
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 
+const StatisticLine = (props) => {
+
+  //No feedback is given when the total is 0
+  if (props.total === 0 && props.text === "Good: ") {
+    return (
+      <tr>
+        <td>No feedback given.</td>
+      </tr>
+    )
+  }
+  //Return empty table row if no feedback is given
+  if (props.total === 0) {
+    return (
+      <tr>
+        <td></td>
+      </tr>
+    )
+  }
+  //Display the positive statistic with the '%'
+  else if (props.total > 0 && props.text === "Positive: ") {
+    return (
+      <tr>
+        <td>{props.text}</td>
+        <td>{props.value} %</td>
+      </tr>
+    )
+  }
+  //Display the rest of the statistics
+  else {
+    return (
+      <tr>
+        <td>{props.text}</td>
+        <td>{props.value}</td>
+      </tr>
+    )
+  }
+}
+
+// 1.8 & 1.9 exercises
 const Statistics = (props) => {
   if (props.statistics[3] === 0) {
     return (
@@ -84,7 +123,16 @@ const App = () => {
       <Button onClick={handleNeutralClick} text='neutral' />
       <Button onClick={handleBadClick} text='bad' />
       <Header title = {formHeaders[1]} />
-      <Statistics statistics = {[good, neutral, bad, total, average, positive]}/>
+      <table>
+      <tbody>
+      <StatisticLine text="Good: " value ={good} total = {total} />
+      <StatisticLine text="Neutral: " value ={neutral} total = {total} />
+      <StatisticLine text="Bad: " value ={bad} total = {total} />
+      <StatisticLine text="All: " value ={total} total = {total} />
+      <StatisticLine text="Average: " value ={average} total = {total} />
+      <StatisticLine text="Positive: " value ={positive} total = {total} />
+      </tbody>
+      </table>
     </>
   )
 }
