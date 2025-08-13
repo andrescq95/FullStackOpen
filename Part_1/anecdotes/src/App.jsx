@@ -14,7 +14,8 @@ const App = () => {
     'The only way to go fast, is to go well.'
   ]
 
-  const [selected, setSelected] = useState(0)
+  const [selected, setSelected] = useState(0) //Tracks the displayed anecdote
+  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0)); //Tracks votes for each anecdote
 
   const handleNextAnecdote = () => {
     let newIndex;
@@ -22,13 +23,21 @@ const App = () => {
     do {
       newIndex = Math.floor(Math.random() * anecdotes.length);
     } while (newIndex === selected);
-    //return the new anecdote (state)
+    //Set the new anecdote (state)
     setSelected(newIndex);
   }
+
+  const handleVote = () => {
+    const newVotes = [...votes]; //Create a copy of the current votes array
+    newVotes[selected] += 1; //Increment the vote count for the currently displayed anecdote
+    setVotes(newVotes); //Set the new vote state
+  };
 
   return (
     <div>
       {anecdotes[selected]} <br/>
+      has {votes[selected]} votes <br/>
+      <Button onClick={handleVote} text='Vote' />
       <Button onClick={handleNextAnecdote} text='Next Anecdote' />
     </div>
   )
