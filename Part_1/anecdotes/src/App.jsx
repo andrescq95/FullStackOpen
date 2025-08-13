@@ -17,12 +17,18 @@ const App = () => {
   const [selected, setSelected] = useState(0)
 
   const handleNextAnecdote = () => {
-
+    let newIndex;
+    //Loop to return a different anecdote from the array
+    do {
+      newIndex = Math.floor(Math.random() * anecdotes.length);
+    } while (newIndex === selected);
+    //return the new anecdote (state)
+    setSelected(newIndex);
   }
 
   return (
     <div>
-      {anecdotes[selected]}
+      {anecdotes[selected]} <br/>
       <Button onClick={handleNextAnecdote} text='Next Anecdote' />
     </div>
   )
