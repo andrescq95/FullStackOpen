@@ -3,6 +3,7 @@ import { useState } from 'react'
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 
 const App = () => {
+  const titles = ['Anecdote of the day', 'Anecdote with most votes']
   const anecdotes = [
     'If it hurts, do it more often.',
     'Adding manpower to a late software project makes it later!',
@@ -32,14 +33,19 @@ const App = () => {
     newVotes[selected] += 1; //Increment the vote count for the currently displayed anecdote
     setVotes(newVotes); //Set the new vote state
   };
-
+  //1.14, Access the anecdotes array > then the votes array > determine the index of the anecdote with the most votes and return it
   return (
-    <div>
+    <>
+      <h1>{titles[0]}</h1>
+      <p>
       {anecdotes[selected]} <br/>
-      has {votes[selected]} votes <br/>
+      has {votes[selected]} votes
+      </p>
       <Button onClick={handleVote} text='Vote' />
       <Button onClick={handleNextAnecdote} text='Next Anecdote' />
-    </div>
+      <h1>{titles[1]}</h1>
+      <p>{anecdotes[votes.indexOf(Math.max(...votes))]}</p>
+    </>
   )
 }
 
