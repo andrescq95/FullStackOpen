@@ -31,6 +31,7 @@ const Total = ( {parts} ) => {
 
 const Course = ({ courses }) => (
   <>
+    <h1>Web development curriculum</h1>
     {courses.map(course => (
       <div key={course.id}>
         <Header name={course.name} />
