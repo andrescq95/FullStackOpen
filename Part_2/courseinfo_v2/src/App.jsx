@@ -17,9 +17,10 @@ const Part = ({part, exercises}) => (
   </p>
 )
 
-const Total = (props) => (
+const Total = ({ parts }) => (
+  //sum starts at 0, .reduce iterates through parts with the 'part' and adds the exercises to the sum
   <p>
-    <b>Total of exercises {props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises + props.parts[3].exercises}</b>
+    <b>Total of exercises: {parts.reduce((sum, part) => sum + part.exercises, 0)}</b>
   </p>
 )
 
