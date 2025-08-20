@@ -1,12 +1,14 @@
 import { useState } from 'react'
+import Contact from './components/Contact'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
+    { name: 'Arto Hellas', number: '040-1234567' },
   ])
   const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
 
-  const addName = (event) => {
+  const addPerson = (event) => {
     event.preventDefault()
     //Prevent empty name
     if (!newName.trim()) {
@@ -16,13 +18,16 @@ const App = () => {
     if (persons.some(person =>
       normalizeName(person.name) === normalizeName(newName))) {
         setNewName('')
+        setNewNumber('')
         return alert(`${newName} is already added to phonebook`)
     }
     const nameObject = {
-      name: newName
+      name: newName,
+      number: newNumber
     }
     setPersons(persons.concat(nameObject))
     setNewName('')
+    setNewNumber('')
   }
 
   const normalizeName = (name) => {
@@ -33,29 +38,24 @@ const App = () => {
     setNewName(event.target.value)
   }
 
+  const handleNumberChange = (event) => {
+    setNewNumber(event.target.value)
+  }
+
   return (
     <div>
-      <h2>Phonebook</h2>
-      <form onSubmit={addName}>
-        <div>
-          Name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          <button type="submit">Add</button>
-        </div>
+      <h1>Phonebook</h1>
+      <h2>Add new contact</h2>
+      <form onSubmit={addPerson}>
+        <div>Name:   <input value={newName} onChange={handleNameChange} /></div>
+        <div>Number: <input value={newNumber} onChange={handleNumberChange}/></div>
+        <div><button type="submit">Add</button></div>
       </form>
       <h2>Numbers</h2>
-      <div>
-        {persons.map(person =>
-          <Name key={person.name} person={person} />
-        )}
-      </div>
+      <>
+        <Contact persons={persons} />
+      </>
     </div>
   )
 }
-
-const Name = ({ person }) => {
-  return <>{person.name}<br/></>
-}
-
 export default App
