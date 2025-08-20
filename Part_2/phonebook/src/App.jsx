@@ -8,11 +8,25 @@ const App = () => {
 
   const addName = (event) => {
     event.preventDefault()
+    //Prevent empty name
+    if (!newName.trim()) {
+      return alert('Name cannot be empty')
+    }
+    //Prevent the user from being able to add names that already exist in the phonebook
+    if (persons.some(person =>
+      normalizeName(person.name) === normalizeName(newName))) {
+        setNewName('')
+        return alert(`${newName} is already added to phonebook`)
+    }
     const nameObject = {
       name: newName
     }
     setPersons(persons.concat(nameObject))
     setNewName('')
+  }
+
+  const normalizeName = (name) => {
+    return name.toLowerCase().trim().replace(/\s+/g, ' ')
   }
 
   const handleNameChange = (event) => {
