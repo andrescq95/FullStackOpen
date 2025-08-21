@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import Contact from './components/Contact'
+import Filter from './components/Filter'
+import Form from './components/Form'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -11,6 +13,11 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setFilterName] = useState('')
+  //Filter contacts based on filterName state. If filterName is empty, show all contacts.
+  const contactsToShow = (!filterName.trim())
+  ? persons
+  : persons.filter(person =>
+      normalizeName(person.name).includes(normalizeName(filterName)))
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -27,7 +34,8 @@ const App = () => {
     }
     const nameObject = {
       name: newName,
-      number: newNumber
+      number: newNumber,
+      id: (persons.length + 1),
     }
     setPersons(persons.concat(nameObject))
     setNewName('')
@@ -50,27 +58,16 @@ const App = () => {
     setFilterName(event.target.value)
   }
 
-  //Filter contacts based on filterName state. If filterName is empty, show all contacts.
-  const contactsToShow = (!filterName.trim())
-   ? persons
-   : persons.filter(person =>
-      normalizeName(person.name).includes(normalizeName(filterName)))
-
   return (
     <div>
-      <h1>Phonebook</h1>
-      <div>Filter contacts: <input value={filterName} onChange={handleFilterNameChange}/></div>
-      <h2>Add new contact</h2>
-      <form onSubmit={addPerson}>
-        <div>Name:   <input value={newName} onChange={handleNameChange} /></div>
-        <div>Number: <input value={newNumber} onChange={handleNumberChange}/></div>
-        <div><button type="submit">Add</button></div>
-      </form>
-      <h2>Numbers</h2>
-      <>
-        <Contact persons = {contactsToShow} />
-      </>
+      <h2>Phonebook</h2>
+      <Filter onChange = {handleFilterNameChange} value = {filterName} />
+      <h3>Add new contact</h3>
+      <Form addPerson = {addPerson} newName = {newName} handleNameChange = {handleNameChange} newNumber = {newNumber} handleNumberChange = {handleNumberChange} />
+      <h3>Numbers</h3>
+      <Contact persons = {contactsToShow} />
     </div>
   )
 }
+
 export default App
