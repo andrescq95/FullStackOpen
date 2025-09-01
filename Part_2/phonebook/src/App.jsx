@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react'
 import Contact from './components/Contact'
 import Filter from './components/Filter'
 import Form from './components/Form'
-import axios from 'axios'
+import contactService from './services/contacts'
 
 const App = () => {
-  const [persons, setPersons] = useState([])
+  const [contacts, setContacts] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setFilterName] = useState('')
@@ -14,44 +14,92 @@ const App = () => {
     return name.toLowerCase().trim().replace(/\s+/g, ' ')
   }
 
-  const hook = () => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+  useEffect(() => {
+    contactService
+      .getAllContacts()
+      .then(initialContacts => {
+        setContacts(initialContacts)
       })
-  }
-  useEffect(hook, [])
+  }, [])
 
   //Filter contacts based on filterName state. If filterName is empty, show all contacts.
   const contactsToShow = (!filterName.trim())
-  ? persons
-  : persons.filter(person =>
+  ? contacts
+  : contacts.filter(person =>
       normalizeName(person.name).includes(normalizeName(filterName)))
 
-  const addPerson = (event) => {
+  const addContact = (event) => {
     event.preventDefault()
-    //Prevent empty name
-    if (!newName.trim()) {
-      return alert('Name cannot be empty')
+    //Prevent empty values
+    if (!newName.trim() || !newNumber.trim()) {
+      return alert('Name or Number cannot be empty')
     }
-    //Prevent the user from being able to add names that already exist in the phonebook
-    if (persons.some(person =>
-      normalizeName(person.name) === normalizeName(newName))) {
-        setNewName('')
-        setNewNumber('')
-        return alert(`${newName} is already added to phonebook`)
+    //If the name is the same
+    else if (contacts.some(contact =>
+      (normalizeName(contact.name) === normalizeName(newName)))) {
+        //Ask if the user wants to update the contact number
+        if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+          //Search for the contact to update
+          const updatedContact = contacts.find(contact =>
+            normalizeName(contact.name) === normalizeName(newName))
+          //Update the number and call the update function
+          updatedContact.number = newNumber
+          handleNumberUpdate(updatedContact)
+          setNewName('')
+          setNewNumber('')
+          return
+        }
+        //If the user doesn't want to update, clear the input fields
+        else {
+            setNewName('')
+            setNewNumber('')
+            return
+        }
     }
-    const nameObject = {
+    //Create a new contact object
+    const contactObject = {
       name: newName,
       number: newNumber,
-      id: (persons.length + 1),
+      id: (contacts.length + 1).toString()
     }
-    setPersons(persons.concat(nameObject))
-    setNewName('')
-    setNewNumber('')
+    //Post the new contact to the server
+    contactService
+      .createContact(contactObject)
+      .then(returnedContact => {
+        setContacts(contacts.concat(returnedContact))
+        setNewName('')
+        setNewNumber('')
+      })
+  }
+
+  const handleDeleteContact = id => {
+    const contact = contacts.find(n => n.id === id)
+    if (window.confirm(`Delete ${contact.name}?`)) {
+      contactService
+        .deleteContact(id)
+        .then(() => {
+          setContacts(contacts.filter(contact => contact.id !== id))
+        })
+        .catch(error => {
+          alert(
+            `The contact '${contact.name}' was already deleted from server`
+          )
+          setContacts(contacts.filter(n => n.id !== id))
+        })
+    }
+  }
+
+  const handleNumberUpdate = updatedContact => {
+    contactService
+    .updateContact(updatedContact.id, updatedContact).then(returnedContact => {
+      setContacts(contacts.map(contact => contact.id === updatedContact.id ? returnedContact : contact))
+    })
+    .catch(error => {
+      alert(
+        `The contact '${updatedContact.name}' was already updated in the server`
+      )
+      setContacts(contacts.filter(n => n.id !== updatedContact.id))
+    })
   }
 
   const handleNameChange = (event) => {
@@ -71,9 +119,15 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter onChange = {handleFilterNameChange} value = {filterName} />
       <h3>Add new contact</h3>
-      <Form addPerson = {addPerson} newName = {newName} handleNameChange = {handleNameChange} newNumber = {newNumber} handleNumberChange = {handleNumberChange} />
+      <Form addContact = {addContact} newName = {newName} handleNameChange = {handleNameChange} newNumber = {newNumber} handleNumberChange = {handleNumberChange} />
       <h3>Numbers</h3>
-      <Contact persons = {contactsToShow} />
+      {contactsToShow.map((contact) => (
+        <Contact
+          key={contact.id}
+          contact={contact}
+          handleDeleteContact={() => handleDeleteContact(contact.id)}
+        />
+      ))}
     </div>
   )
 }
