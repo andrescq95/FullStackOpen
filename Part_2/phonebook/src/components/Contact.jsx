@@ -1,6 +1,6 @@
 const Contact = ({ contact, handleDeleteContact }) => {
     return (
-      <li>
+      <li className='contact'>
         {contact.name} {contact.number}
         <button onClick={handleDeleteContact}>delete</button>
       </li>

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import Contact from './components/Contact'
 import Filter from './components/Filter'
 import Form from './components/Form'
+import Footer from './components/Footer'
+import Notification from './components/Notification'
 import contactService from './services/contacts'
 
 const App = () => {
@@ -9,6 +11,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setFilterName] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [alertType, setAlertType] = useState(false) // true for success, false for error
 
   const normalizeName = (name) => {
     return name.toLowerCase().trim().replace(/\s+/g, ' ')
@@ -32,7 +36,14 @@ const App = () => {
     event.preventDefault()
     //Prevent empty values
     if (!newName.trim() || !newNumber.trim()) {
-      return alert('Name or Number cannot be empty')
+      setNotificationMessage(
+          `Name or Number cannot be empty'`
+        )
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 2000)
+        setAlertType(false)
+      return
     }
     //If the name is the same
     else if (contacts.some(contact =>
@@ -69,6 +80,13 @@ const App = () => {
         setContacts(contacts.concat(returnedContact))
         setNewName('')
         setNewNumber('')
+        setNotificationMessage(
+          `Added ${contactObject.name} to the phonebook`
+        )
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 2000)
+        setAlertType(true)
       })
   }
 
@@ -78,12 +96,23 @@ const App = () => {
       contactService
         .deleteContact(id)
         .then(() => {
+          setNotificationMessage(
+            `Successfully deleted ${contact.name} from the phonebook`
+          )
+          setTimeout(() => {
+            setNotificationMessage(null)
+          }, 2000)
+          setAlertType(true)
           setContacts(contacts.filter(contact => contact.id !== id))
         })
         .catch(error => {
-          alert(
-            `The contact '${contact.name}' was already deleted from server`
+          setNotificationMessage(
+          `Error deleting the contact ${contact.name}`
           )
+          setTimeout(() => {
+            setNotificationMessage(null)
+          }, 2000)
+          setAlertType(false)
           setContacts(contacts.filter(n => n.id !== id))
         })
     }
@@ -92,12 +121,23 @@ const App = () => {
   const handleNumberUpdate = updatedContact => {
     contactService
     .updateContact(updatedContact.id, updatedContact).then(returnedContact => {
+      setNotificationMessage(
+        `Successfully updated ${updatedContact.name} from the phonebook`
+      )
+      setTimeout(() => {
+        setNotificationMessage(null)
+      }, 2000)
+      setAlertType(true)
       setContacts(contacts.map(contact => contact.id === updatedContact.id ? returnedContact : contact))
     })
     .catch(error => {
-      alert(
-        `The contact '${updatedContact.name}' was already updated in the server`
+      setNotificationMessage(
+        `Error updating the contact ${updatedContact.name}`
       )
+      setTimeout(() => {
+        setNotificationMessage(null)
+      }, 2000)
+      setAlertType(false)
       setContacts(contacts.filter(n => n.id !== updatedContact.id))
     })
   }
@@ -117,6 +157,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage} alertType = {alertType}/>
       <Filter onChange = {handleFilterNameChange} value = {filterName} />
       <h3>Add new contact</h3>
       <Form addContact = {addContact} newName = {newName} handleNameChange = {handleNameChange} newNumber = {newNumber} handleNumberChange = {handleNumberChange} />
@@ -128,6 +169,7 @@ const App = () => {
           handleDeleteContact={() => handleDeleteContact(contact.id)}
         />
       ))}
+      <Footer />
     </div>
   )
 }
