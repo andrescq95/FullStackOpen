@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const PORT = 3001
 
 app.use(express.json())
 
@@ -25,6 +26,19 @@ let contacts = [
       "number": "39-23-6423122"
     }
 ]
+
+app.get('/', (request, response) => {
+  response.send('<h1>Phonebook Main Page</h1>')
+})
+
+app.get('/info', (request, response) => {
+  const date = new Date()
+  response.send(`<p>Phonebook has info for ${contacts.length} people</p><p>${date}</p>`)
+})
+
+app.get('/api/contacts', (request, response) => {
+  response.json(contacts)
+})
 
 app.get('/api/contacts/:id', (request, response) => {
   const id = request.params.id
@@ -71,15 +85,6 @@ app.delete('/api/contacts/:id', (request, response) => {
   response.status(204).end()
 })
 
-app.get('/', (request, response) => {
-  response.send('<h1>Hello World!</h1>')
-})
-
-app.get('/api/contacts', (request, response) => {
-  response.json(contacts)
-})
-
-const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
