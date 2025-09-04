@@ -27,7 +27,11 @@ let contacts = [
 ]
 
 app.use(express.json())
-app.use(morgan('tiny'));
+
+morgan.token('body', (req, res) => {
+  return JSON.stringify(req.body) || null;
+});
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
 //Main page
 app.get('/', (request, response) => {
@@ -82,9 +86,9 @@ app.post('/api/contacts', (request, response) => {
     })
   }
   const contact = {
-    name: body.name,
-    number: body.number,
     id: generateId(),
+    name: body.name,
+    number: body.number
   }
 
   contacts = contacts.concat(contact)
