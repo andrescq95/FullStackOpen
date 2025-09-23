@@ -78,6 +78,7 @@ const App = () => {
       .createContact(contactObject)
       .then(returnedContact => {
         setContacts(contacts.concat(returnedContact))
+        console.log(returnedContact)
         setNewName('')
         setNewNumber('')
         setNotificationMessage(
@@ -162,13 +163,15 @@ const App = () => {
       <h3>Add new contact</h3>
       <Form addContact = {addContact} newName = {newName} handleNameChange = {handleNameChange} newNumber = {newNumber} handleNumberChange = {handleNumberChange} />
       <h3>Numbers</h3>
-      {contactsToShow.map((contact) => (
-        <Contact
-          key={contact.id}
-          contact={contact}
-          handleDeleteContact={() => handleDeleteContact(contact.id)}
-        />
-      ))}
+      <ul>
+        {contactsToShow.map((contact) => (
+          <Contact
+            key={contact.id}
+            contact={contact}
+            handleDeleteContact={() => handleDeleteContact(contact.id)}
+          />
+        ))}
+      </ul>
       <Footer />
     </div>
   )
