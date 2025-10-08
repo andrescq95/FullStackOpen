@@ -34,14 +34,9 @@ app.get('/api/contacts', (request, response) => {
 
 //Get a single contact by ID
 app.get('/api/contacts/:id', (request, response) => {
-  const id = request.params.id
-  const contact = contacts.find(contact => contact.id === id)
-
-  if (contact) {
+  Contact.findById(request.params.id).then(contact => {
     response.json(contact)
-  } else {
-    response.status(404).end()
-  }
+  })
 })
 
 //Random ID generator
@@ -68,28 +63,14 @@ app.post('/api/contacts', (request, response) => {
       error: 'Name must be unique'
     })
   }
-  const contact = {
+  const contact = new Contact({
     id: generateId(),
     name: body.name,
     number: body.number
-  }
-
-  contacts = contacts.concat(contact)
-
-  response.json(contact)
-})
-
-app.put('/api/contacts/:id', (request, response, next) => {
-  const id = request.params.id
-  const contact = contacts.find(contact => contact.id === id)
-  if (!contact) {
-    return response.status(404).end()
-  } else {
-    contact.name = request.body.name
-    contact.number = request.body.number
-    return note.save().then((contact) => {
-        response.json(contact)})
-  }
+  })
+  contact.save().then(savedContact => {
+    response.json(savedContact)
+  })
 })
 
 //Delete a contact by ID

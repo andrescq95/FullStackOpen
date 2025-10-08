@@ -55,7 +55,7 @@ const App = () => {
             normalizeName(contact.name) === normalizeName(newName))
           //Update the number and call the update function
           updatedContact.number = newNumber
-          handleNumberUpdate(updatedContact)
+          //handleNumberUpdate(updatedContact)
           setNewName('')
           setNewNumber('')
           return
@@ -78,7 +78,6 @@ const App = () => {
       .createContact(contactObject)
       .then(returnedContact => {
         setContacts(contacts.concat(returnedContact))
-        console.log(returnedContact)
         setNewName('')
         setNewNumber('')
         setNotificationMessage(
