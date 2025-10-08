@@ -1,17 +1,15 @@
 const mongoose = require('mongoose')
 
-const password = ''
-
 // Check if password is provided
 if (process.argv.length < 3) {
   console.log('give password as argument')
   process.exit(1)
 }
 
+const password = process.argv[2]
 const url = `mongodb+srv://andrescq95:${password}@phonebook.7wcjnwt.mongodb.net/phonebook?retryWrites=true&w=majority&appName=Phonebook`
 
 mongoose.set('strictQuery',false)
-
 mongoose.connect(url)
 
 const contactSchema = new mongoose.Schema({

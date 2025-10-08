@@ -1,33 +1,11 @@
-const express = require('express')
+require('dotenv').config()
 const morgan = require('morgan')
+const express = require('express')
 const app = express()
-const PORT = process.env.PORT || 3001
+const Contact = require('./models/contact')
 
-let contacts = [
-    {
-      "id": "1",
-      "name": "Arto Hellas",
-      "number": "040-123456"
-    },
-    {
-      "id": "2",
-      "name": "Ada Lovelace",
-      "number": "39-44-5323523"
-    },
-    {
-      "id": "3",
-      "name": "Dan Abramov",
-      "number": "12-43-234345"
-    },
-    {
-      "id": "4",
-      "name": "Mary Poppendieck",
-      "number": "39-23-6423122"
-    }
-]
-
-app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
+app.use(express.json())
 app.use(express.static('dist'))
 
 morgan.token('body', (req, res) => {
@@ -46,8 +24,10 @@ app.get('/info', (request, response) => {
 })
 
 //Get all contacts
-app.get('/api/contacts', (request, response) => {
-  response.json(contacts)
+app.get('/api/notes', (request, response) => {
+    Contact.find({}).then(contacts => {
+    response.json(contacts)
+  })
 })
 
 //Get a single contact by ID
@@ -97,6 +77,19 @@ app.post('/api/contacts', (request, response) => {
   response.json(contact)
 })
 
+app.put('/api/contacts/:id', (request, response, next) => {
+  const id = request.params.id
+  const contact = contacts.find(contact => contact.id === id)
+  if (!contact) {
+    return response.status(404).end()
+  } else {
+    contact.name = request.body.name
+    contact.number = request.body.number
+    return note.save().then((contact) => {
+        response.json(contact)})
+  }
+})
+
 //Delete a contact by ID
 app.delete('/api/contacts/:id', (request, response) => {
   const id = request.params.id
@@ -105,6 +98,7 @@ app.delete('/api/contacts/:id', (request, response) => {
   response.status(204).end()
 })
 
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
