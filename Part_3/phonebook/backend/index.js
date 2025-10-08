@@ -4,6 +4,8 @@ const express = require('express')
 const app = express()
 const Contact = require('./models/contact')
 
+let contacts = []
+
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 app.use(express.json())
 app.use(express.static('dist'))
@@ -24,7 +26,7 @@ app.get('/info', (request, response) => {
 })
 
 //Get all contacts
-app.get('/api/notes', (request, response) => {
+app.get('/api/contacts', (request, response) => {
     Contact.find({}).then(contacts => {
     response.json(contacts)
   })
