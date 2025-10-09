@@ -37,7 +37,7 @@ const App = () => {
     //Prevent empty values
     if (!newName.trim() || !newNumber.trim()) {
       setNotificationMessage(
-          `Name or Number cannot be empty'`
+          `Name or Number cannot be empty`
         )
         setTimeout(() => {
           setNotificationMessage(null)
@@ -55,7 +55,7 @@ const App = () => {
             normalizeName(contact.name) === normalizeName(newName))
           //Update the number and call the update function
           updatedContact.number = newNumber
-          //handleNumberUpdate(updatedContact)
+          handleNumberUpdate(updatedContact)
           setNewName('')
           setNewNumber('')
           return
@@ -107,7 +107,7 @@ const App = () => {
         })
         .catch(error => {
           setNotificationMessage(
-          `Error deleting the contact ${contact.name}`
+          `Error deleting the contact ${contact.name}: ${error.response?.data?.error || error.message}`
           )
           setTimeout(() => {
             setNotificationMessage(null)
@@ -120,7 +120,8 @@ const App = () => {
 
   const handleNumberUpdate = updatedContact => {
     contactService
-    .updateContact(updatedContact.id, updatedContact).then(returnedContact => {
+    .updateContact(updatedContact.id, updatedContact)
+    .then(returnedContact => {
       setNotificationMessage(
         `Successfully updated ${updatedContact.name} from the phonebook`
       )
@@ -132,7 +133,7 @@ const App = () => {
     })
     .catch(error => {
       setNotificationMessage(
-        `Error updating the contact ${updatedContact.name}`
+        `Error updating the contact ${updatedContact.name}: ${error.response?.data?.error || error.message}`
       )
       setTimeout(() => {
         setNotificationMessage(null)
