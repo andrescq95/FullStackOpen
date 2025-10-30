@@ -6,7 +6,7 @@ const url = process.env.MONGODB_URI
 
 console.log('connecting to', url)
 mongoose.connect(url)
-  .then(result => {
+  .then(() => {
     console.log('connected to MongoDB')
   })
   .catch(error => {
@@ -24,10 +24,10 @@ const contactSchema = new mongoose.Schema({
     validate: {
       validator: function(v) {
         if (!/^\d{2,3}-\d+$/.test(v)) {
-          return false;
+          return false
         }
-        const digitsOnly = v.replace(/-/g, '');
-        return digitsOnly.length >= 8;
+        const digitsOnly = v.replace(/-/g, '')
+        return digitsOnly.length >= 8
       },
       message: props => `${props.value} must be in format: XX-XXXXX or XXX-XXXXX with minimum 8 digits (excluding the dash)`
     },

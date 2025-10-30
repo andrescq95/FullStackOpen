@@ -18,12 +18,12 @@ const errorHandler = (error, request, response, next) => {
 
 app.use(express.static('dist'))
 app.use(express.json())
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 
-morgan.token('body', (req, res) => {
-  return JSON.stringify(req.body) || null;
-});
+morgan.token('body', (req) => {
+  return JSON.stringify(req.body) || null
+})
 
 //Info page
 app.get('/info', (request, response, next) => {
@@ -37,7 +37,7 @@ app.get('/info', (request, response, next) => {
 
 //Get all contacts
 app.get('/api/contacts', (request, response) => {
-    Contact.find({}).then(contacts => {
+  Contact.find({}).then(contacts => {
     response.json(contacts)
   })
 })
@@ -45,24 +45,24 @@ app.get('/api/contacts', (request, response) => {
 //Get a single contact by ID
 app.get('/api/contacts/:id', (request, response, next) => {
   Contact.findById(request.params.id)
-  .then(contact => {
-    if (contact) {
+    .then(contact => {
+      if (contact) {
         response.json(contact)
-    } else {
+      } else {
         response.status(404).end()
-    }
-  }).catch(error => next(error))
+      }
+    }).catch(error => next(error))
 })
 
 //Random ID generator
-const generateId = () => {
+/*const generateId = () => {
   return String(Math.floor(Math.random() * (1000 - 5) + 5))
-}
+}*/
 
 // Normalize name by trimming spaces and converting to lowercase
-const normalizeName = (name) => {
-    return name.toLowerCase().trim().replace(/\s+/g, ' ')
-}
+/*const normalizeName = (name) => {
+  return name.toLowerCase().trim().replace(/\s+/g, ' ')
+}*/
 
 //Add a new contact
 app.post('/api/contacts', (request, response, next) => {
@@ -73,10 +73,11 @@ app.post('/api/contacts', (request, response, next) => {
     number: body.number
   })
 
-  contact.save().then(savedContact => {
-    response.json(savedContact)
-  })
-  .catch(error => next(error))
+  contact.save()
+    .then(savedContact => {
+      response.json(savedContact)
+    })
+    .catch(error => next(error))
 })
 
 //Delete a contact by ID
@@ -102,15 +103,15 @@ app.put('/api/contacts/:id', (request, response, next) => {
       context: 'query'
     }
   )
-  .then(updatedContact => {
-    if (!updatedContact) {
-      return response.status(404).json({
-        error: 'Contact not found'
-      });
-    }
-    response.json(updatedContact);
-  })
-  .catch(error => next(error))
+    .then(updatedContact => {
+      if (!updatedContact) {
+        return response.status(404).json({
+          error: 'Contact not found'
+        })
+      }
+      response.json(updatedContact)
+    })
+    .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {

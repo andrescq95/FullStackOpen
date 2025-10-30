@@ -24,15 +24,17 @@ if ((process.argv[2]) === password) {
   // List all contacts
   if (process.argv.length === 3){
     console.log('Phonebook:')
-    Contact.find({}).then(result => {
-      result.forEach(contact => {
-      console.log(contact.name, contact.number)
+    Contact.find({})
+      .then(result => {
+        result.forEach(contact => {
+          console.log(contact.name, contact.number)
+        })
+        mongoose.connection.close()
       })
-      mongoose.connection.close()
-    }).catch(error => {
-      console.error("Error fetching contacts:", error)
-      mongoose.connection.close()
-    })
+      .catch(error => {
+        console.error('Error fetching contacts:', error)
+        mongoose.connection.close()
+      })
   }
   // Add a new contact
   else if (process.argv.length === 5){
@@ -44,13 +46,15 @@ if ((process.argv[2]) === password) {
       number: number
     })
 
-    contact.save().then(result => {
-      console.log('Added ',contact.name,' number ',contact.number, 'to phonebook')
-      mongoose.connection.close()
-    }).catch(error => {
-      console.error("Error saving contact:", error)
-      mongoose.connection.close()
-    })
+    contact.save()
+      .then(() => {
+        console.log('Added ',contact.name,' number ',contact.number, 'to phonebook')
+        mongoose.connection.close()
+      })
+      .catch(error => {
+        console.error('Error saving contact:', error)
+        mongoose.connection.close()
+      })
   }
   // Too many arguments
   else if (process.argv.length > 5){
@@ -65,6 +69,6 @@ if ((process.argv[2]) === password) {
 }
 // Invalid password
 else {
-    console.log("Invalid password")
-    process.exit(1)
+  console.log('Invalid password')
+  process.exit(1)
 }

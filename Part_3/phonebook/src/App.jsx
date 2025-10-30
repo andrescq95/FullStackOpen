@@ -148,7 +148,11 @@ const App = () => {
         setNotificationMessage(null)
       }, 2000)
       setAlertType(false)
-      setContacts(contacts.filter(n => n.id !== updatedContact.id))
+      contactService
+      .getAllContacts()
+      .then(initialContacts => {
+        setContacts(initialContacts)
+      })
     })
   }
 
