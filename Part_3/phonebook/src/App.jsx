@@ -90,7 +90,7 @@ const App = () => {
       })
       .catch(error => {
         setNotificationMessage(
-          `Error adding the contact: ${error.response.data.error}`
+          `Error: ${error.response?.data?.error || error.message}`
         )
         setTimeout(() => {
           setNotificationMessage(null)
@@ -142,7 +142,7 @@ const App = () => {
     })
     .catch(error => {
       setNotificationMessage(
-        `Error updating the contact ${updatedContact.name}: ${error.response?.data?.error || error.message}`
+        `Error: ${updatedContact.name}: ${error.response?.data?.error || error.message}`
       )
       setTimeout(() => {
         setNotificationMessage(null)

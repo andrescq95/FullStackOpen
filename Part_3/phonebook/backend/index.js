@@ -102,7 +102,14 @@ app.put('/api/contacts/:id', (request, response, next) => {
       context: 'query'
     }
   )
-  .then(updatedContact => response.json(updatedContact))
+  .then(updatedContact => {
+    if (!updatedContact) {
+      return response.status(404).json({
+        error: 'Contact not found'
+      });
+    }
+    response.json(updatedContact);
+  })
   .catch(error => next(error))
 })
 
