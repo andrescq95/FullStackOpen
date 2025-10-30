@@ -88,6 +88,15 @@ const App = () => {
         }, 2000)
         setAlertType(true)
       })
+      .catch(error => {
+        setNotificationMessage(
+          `Error adding the contact: ${error.response.data.error}`
+        )
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 2000)
+        setAlertType(false)
+    })
   }
 
   const handleDeleteContact = id => {

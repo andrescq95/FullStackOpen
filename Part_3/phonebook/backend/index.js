@@ -9,6 +9,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   }
 
   next(error)
@@ -63,15 +65,18 @@ const normalizeName = (name) => {
 }
 
 //Add a new contact
-app.post('/api/contacts', (request, response) => {
+app.post('/api/contacts', (request, response, next) => {
   const body = request.body
+
   const contact = new Contact({
     name: body.name,
     number: body.number
   })
+
   contact.save().then(savedContact => {
     response.json(savedContact)
   })
+  .catch(error => next(error))
 })
 
 //Delete a contact by ID
@@ -85,20 +90,20 @@ app.delete('/api/contacts/:id', (request, response, next) => {
 })
 
 app.put('/api/contacts/:id', (request, response, next) => {
-  const body = request.body
-  Contact.findById(request.params.id)
-    .then(contact => {
-      if (!contact) {
-        return response.status(404).end()
-      }
-      contact.name = body.name
-      contact.number = body.number
-
-      return contact.save().then((updatedContact) => {
-        response.json(updatedContact)
-      })
-    })
-    .catch(error => next(error))
+  Contact.findByIdAndUpdate(
+    request.params.id,
+    {
+      name: request.body.name,
+      number: request.body.number
+    },
+    {
+      new: true,
+      runValidators: true,
+      context: 'query'
+    }
+  )
+  .then(updatedContact => response.json(updatedContact))
+  .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
